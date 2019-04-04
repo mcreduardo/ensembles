@@ -3,7 +3,6 @@
 # 2019-03-19
 # 
 # Implementation of a simple ID3 decision tree classifier
-# for CS760 Spring 2019, HW4
 
 import numpy as np
 

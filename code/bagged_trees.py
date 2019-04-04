@@ -53,7 +53,7 @@ if printOutput:
     for row in bootstrapIndices:
         for j in range(numTrees-1):
             print(row[j], end= ",")
-        print(row[-1])
+        print(row[-1], end="\n\n")
 
 ######################################################################################
 
