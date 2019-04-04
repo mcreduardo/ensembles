@@ -49,14 +49,33 @@ for i in range(numTrees):
 
 # print indices of your bootstrapped samples
 
-if printOutput:
+if False:#printOutput:
     for row in bootstrapIndices:
         for j in range(numTrees-1):
             print(row[j], end= ",")
-        print(row[-1], end="\n\n")
+        print(row[-1])
+    print("\n", end = "")
 
 ######################################################################################
+# Train models
 
+models = [] # init list for trained models
+for i in range(numTrees):
+    # build decision tree
+    mydt = dt.DecisionTree()
+
+    # train data
+    train_X = trainingData[bootstrapIndices[:,i]]
+    train_y = train_X[:,-1]
+    train_X = train_X[:,:-1]
+
+    # training
+    mydt.fit(train_X, train_y, features, max_depth=maxDepth)
+
+    # append to models list
+    models.append(mydt)
+
+print(models)
 
 
 
