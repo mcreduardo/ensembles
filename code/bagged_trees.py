@@ -49,7 +49,7 @@ for i in range(numTrees):
 
 # print indices of your bootstrapped samples
 
-if False:#printOutput:
+if printOutput:
     for row in bootstrapIndices:
         for j in range(numTrees-1):
             print(row[j], end= ",")
