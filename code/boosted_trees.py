@@ -78,11 +78,53 @@ for i in range(maxTrees):
 
 numClassifiers = len(classifiers)
 
-# print weights
+# print weights and scores
 if printOutput:
     for i in range(len(wi)):
         for j in range(numClassifiers - 1):
             print("%.12f"%weights[j][i], end=",")
         print("%.12f"%weights[numClassifiers-1][i])
     print("")
+    for j in range(numClassifiers - 1):
+        print("%.12f"%classifiers_scores[j], end=",")
+    print("%.12f"%classifiers_scores[numClassifiers-1])
+    print("")
 
+
+
+######################################################################################
+# Testing
+
+# separate features from class
+test_X = testData[:,:-1]
+test_y = testData[:,-1]
+
+individual_predictions = []
+for tree in classifiers: # predict for all trained models
+    individual_predictions.append(tree.predict(test_X, prob=False))
+
+# compute overrall prediction
+classes = features[-1][-1]
+predicted = []
+correct_predictions = 0
+for i in range(len(test_y)):
+    aux = np.zeros(len(classes))
+    for j in range(numClassifiers):
+        aux[classes.index(individual_predictions[j][i])] += \
+            classifiers_scores[j]
+    boosted_prediction = classes[np.argmax(aux)]
+    predicted.append(boosted_prediction)
+    # correct preditction?
+    if boosted_prediction == test_y[i]: correct_predictions += 1
+
+# print predictions and accuracy
+if printOutput:
+    for i in range(len(test_y)):
+        for j in range(numClassifiers):
+            print(individual_predictions[j][i], end=",")
+        print(predicted[i], end= ",")
+        print(test_y[i], end= "\n")
+    print("\n"+str(correct_predictions/len(test_y)))
+
+    
+    
