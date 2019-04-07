@@ -5,20 +5,12 @@
 ######################################################################################
 
 import numpy as np
-import sys
 import json # Load data sets
 import DecisionTree as dt # implementation of DecisionTree
 
-printOutput = True
-
 ######################################################################################
 
-def boosted_trees_cm():
-    # Receive arguments using sys
-    maxTrees = int(sys.argv[1])
-    maxDepth = int(sys.argv[2])
-    trainingSetPath = sys.argv[3]
-    testSetPath = sys.argv[4]
+def boosted_trees_cm(maxTrees, maxDepth, trainingSetPath, testSetPath):
 
     # Load training and test set
     # metadata + data
@@ -30,12 +22,16 @@ def boosted_trees_cm():
     # Extract metadata
     features = trainSet["metadata"]["features"]
 
+    # init conf matrix
+    classes = features[-1][-1]
+    numClasses = len(classes)
+    confusion_matrix = np.zeros((numClasses,numClasses)).astype(int)
+
     # Get data
     trainingData = np.array(trainSet["data"])
     testData = np.array(testSet["data"])
 
     trainData_size = len(trainingData)
-    numClasses = len(features[-1][-1])
 
 
     # Multi-class AdaBoost
@@ -88,14 +84,22 @@ def boosted_trees_cm():
         individual_predictions.append(tree.predict(test_X, prob=False))
 
     # compute overrall prediction
-    classes = features[-1][-1]
     predicted = []
+    correct_predictions = 0
     for i in range(len(test_y)):
         aux = np.zeros(len(classes))
         for j in range(numClassifiers):
             aux[classes.index(individual_predictions[j][i])] += \
                 classifiers_scores[j]
-        predicted.append(classes[np.argmax(aux)])
+        boosted_prediction = classes[np.argmax(aux)]
+        predicted.append(boosted_prediction)
+        if boosted_prediction == test_y[i]: correct_predictions += 1
+
+    # compute confusion matrix
+    for i in range(len(test_y)):
+        confusion_matrix\
+            [classes.index(predicted[i])][classes.index(test_y[i])] += 1
+        
 
     return confusion_matrix
 
